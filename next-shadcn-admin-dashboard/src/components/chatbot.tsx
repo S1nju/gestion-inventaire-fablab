@@ -2,34 +2,18 @@
 
 import { useState, useRef, useEffect } from "react";
 
-// Helper to call Queen model API
-async function fetchQueenResponse(prompt: string): Promise<string> {
-  // Get the API key from env
-  const apiKey = process.env.QUEENAPIKEY || process.env.NEXT_PUBLIC_QUEENAPIKEY;
-  const endpoint = process.env.NEXT_PUBLIC_QUEEN_API_URL || "https://api.queen-model.com/v1/chat/completions";
-  // You may need to adjust endpoint above to your Queen API endpoint
-  const res = await fetch(endpoint, {
+// Helper to call the internal chat API route (uses Qwen via DashScope)
+async function fetchAIResponse(prompt: string): Promise<string> {
+  const res = await fetch("/api/chat", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: "queen", // or your model name
-      messages: [
-        { role: "system", content: "Vous êtes un assistant IA pour la gestion d'inventaire universitaire." },
-        { role: "user", content: `[Prompt Assisté] ${prompt}` },
-      ],
-      max_tokens: 512,
-      temperature: 0.7,
-    }),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: prompt }),
   });
   if (!res.ok) {
-    return "[Queen API] Erreur lors de la génération de la réponse.";
+    throw new Error(`HTTP ${res.status}`);
   }
   const data = await res.json();
-  // OpenAI/Queen API format: { choices: [{ message: { content: ... } }] }
-  return data?.choices?.[0]?.message?.content?.trim() || "[Queen API] Réponse vide.";
+  return data?.reply || "Désolé, je n'ai pas pu générer une réponse.";
 }
 import { MessageCircle, X, Send, Bot, User } from "lucide-react";
 
@@ -80,13 +64,13 @@ export function Chatbot() {
       lowerInput.includes("matériel");
 
     if (!isComponentQuery) {
-      // Normal question workflow: use Queen model
-      fetchQueenResponse(userMsg.content)
-        .then((queenResponse) => {
+      // Normal question workflow: use internal AI chat API (Qwen)
+      fetchAIResponse(userMsg.content)
+        .then((aiResponse) => {
           const botMsg: Message = {
             id: (Date.now() + 1).toString(),
             role: "bot",
-            content: queenResponse,
+            content: aiResponse,
           };
           setMessages((prev) => [...prev, botMsg]);
         })
@@ -94,7 +78,7 @@ export function Chatbot() {
           const botMsg: Message = {
             id: (Date.now() + 1).toString(),
             role: "bot",
-            content: "[Queen API] Erreur lors de la génération de la réponse.",
+            content: "Désolé, une erreur est survenue. Veuillez réessayer.",
           };
           setMessages((prev) => [...prev, botMsg]);
         })
@@ -180,7 +164,7 @@ export function Chatbot() {
   };
 
 
-  // generateBotResponse is now replaced by Queen model API call
+  // AI responses handled via /api/chat route (Qwen via DashScope)
 
   return (
     <>
