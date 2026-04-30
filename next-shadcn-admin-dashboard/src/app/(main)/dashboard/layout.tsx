@@ -53,7 +53,7 @@ export default async function Layout({ children }: Readonly<{ children: ReactNod
             name: authenticatedUser.name ?? "User",
             email: authenticatedUser.email ?? "",
             avatar: "",
-            role: "user",
+            role: authenticatedUser.role ?? authenticatedUser.roles?.[0] ?? "user",
           }}
         />
       </div>
@@ -62,7 +62,7 @@ export default async function Layout({ children }: Readonly<{ children: ReactNod
           "[html[data-content-layout=centered]_&>*]:mx-auto",
           "[html[data-content-layout=centered]_&>*]:w-full",
           "[html[data-content-layout=centered]_&>*]:max-w-screen-2xl",
-          "print:!m-0 print:!w-full print:!max-w-none",
+          "print:m-0! print:w-full! print:max-w-none!",
         )}
       >
         <header
@@ -91,7 +91,7 @@ export default async function Layout({ children }: Readonly<{ children: ReactNod
                   name: authenticatedUser.name ?? "User",
                   email: authenticatedUser.email ?? "",
                   avatar: "",
-                  role: "user",
+                  role: authenticatedUser.role ?? authenticatedUser.roles?.[0] ?? "user",
                 }}
               />
             </div>

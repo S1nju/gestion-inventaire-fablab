@@ -75,6 +75,18 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
   const variant = isSynced ? sidebarVariant : props.variant;
   const collapsible = isSynced ? sidebarCollapsible : props.collapsible;
 
+  const filteredItems = user?.role === "student"
+    ? sidebarItems
+      .map((group) => ({
+        ...group,
+        items: group.items.filter(
+          (item) =>
+            item.title === "Demandes (Composants)" || item.title === "Projets"
+        ),
+      }))
+      .filter((group) => group.items.length > 0)
+    : sidebarItems;
+
   return (
     <Sidebar
       {...props}
@@ -102,7 +114,7 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={sidebarItems} />
+        <NavMain items={filteredItems} />
         {/* <NavDocuments items={data.documents} /> */}
         {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>

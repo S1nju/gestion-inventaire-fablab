@@ -55,18 +55,15 @@ const emptyForm: ItemForm = {
   casier_id: "",
 };
 
-export function InventoryCrudPanel({ items, casiers, canEditDelete = true }: Props) {
+export function InventoryCrudPanel({ items, casiers, canEditDelete = true, isAdmin = false }: Props & { isAdmin?: boolean }) {
   const router = useRouter();
   const [createOpen, setCreateOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-
   const [editingItem, setEditingItem] = useState<Item | null>(null);
   const [deletingItem, setDeletingItem] = useState<Item | null>(null);
-
   const [createForm, setCreateForm] = useState<ItemForm>(emptyForm);
   const [editForm, setEditForm] = useState<ItemForm>(emptyForm);
-
   const sortedItems = useMemo(() => [...items].sort((a, b) => b.id - a.id), [items]);
 
   async function onCreate() {
@@ -152,16 +149,20 @@ export function InventoryCrudPanel({ items, casiers, canEditDelete = true }: Pro
 
   return (
     <div className="space-y-4">
-      {canEditDelete && (
+      {(canEditDelete || isAdmin) && (
         <div className="flex justify-end gap-2">
-          <Button variant="secondary" type="button" onClick={() => window.print()}>
-            <Printer className="mr-2 size-4" />
-            Imprimer Codes-barres
-          </Button>
-          <Button type="button" onClick={() => setCreateOpen(true)}>
-            <Plus className="mr-2 size-4" />
-            Ajouter un Composant
-          </Button>
+          {isAdmin && (
+            <Button variant="secondary" type="button" onClick={() => window.print()}>
+              <Printer className="mr-2 size-4" />
+              Imprimer Codes-barres
+            </Button>
+          )}
+          {canEditDelete && (
+            <Button type="button" onClick={() => setCreateOpen(true)}>
+              <Plus className="mr-2 size-4" />
+              Ajouter un Composant
+            </Button>
+          )}
         </div>
       )}
 

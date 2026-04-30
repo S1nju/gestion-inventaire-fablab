@@ -20,6 +20,15 @@ export function ComponentRequestsCrudPanel({ requests, isAdmin, currentUserId }:
         try {
             await createComponentRequest({ nom_composant: form.nom_composant, quantite: Number(form.quantite) || 1, user_id: currentUserId });
             toast.success("Demande envoyée !");
+
+            // Email notification logic via mailto
+            const subject = encodeURIComponent(`Demande de Composant: ${form.nom_composant}`);
+            const body = encodeURIComponent(`Bonjour,\n\nUne nouvelle demande a été créée dans le FabLab :\n\nComposant : ${form.nom_composant}\nQuantité : ${form.quantite}\n\nMerci de valider cette demande dans le tableau de bord.`);
+            const mailtoUrl = `mailto:aminebouhaik527@gmail.com?subject=${subject}&body=${body}`;
+
+            // Trigger the mail client
+            window.location.href = mailtoUrl;
+
             setOpen(false);
             setForm({ nom_composant: "", quantite: "1" });
             router.refresh();

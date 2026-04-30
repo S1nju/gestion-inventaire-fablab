@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
     } else {
       console.warn(
         "[Chat API] No QWEN_API_KEY set. Using rule-based fallback. " +
-          "Add QWEN_API_KEY (DashScope key) to .env.local to enable Qwen AI."
+        "Add QWEN_API_KEY (DashScope key) to .env.local to enable Qwen AI."
       );
     }
 

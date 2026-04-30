@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 
-// Helper to call the internal chat API route (uses Qwen via DashScope)
+// Helper to call the internal chat API route
 async function fetchAIResponse(prompt: string): Promise<string> {
   const res = await fetch("/api/chat", {
     method: "POST",
@@ -57,14 +57,14 @@ export function Chatbot() {
     setIsTyping(true);
 
     const lowerInput = userMsg.content.toLowerCase();
-    const isComponentQuery = 
-      lowerInput.includes("composant") || 
-      lowerInput.includes("article") || 
-      lowerInput.includes("item") || 
+    const isComponentQuery =
+      lowerInput.includes("composant") ||
+      lowerInput.includes("article") ||
+      lowerInput.includes("item") ||
       lowerInput.includes("matériel");
 
     if (!isComponentQuery) {
-      // Normal question workflow: use internal AI chat API (Qwen)
+      // Normal question workflow: use internal AI chat API
       fetchAIResponse(userMsg.content)
         .then((aiResponse) => {
           const botMsg: Message = {
@@ -106,10 +106,10 @@ export function Chatbot() {
       const res = await fetch(`${apiBaseUrl}/items?search=${searchKeyword}`, {
         headers: { "Accept": "application/json" }
       });
-      
+
       let dbResultText = "";
       let items: any[] = [];
-      
+
       if (res.ok) {
         const data = await res.json();
         items = data?.data?.data || [];
@@ -132,13 +132,13 @@ export function Chatbot() {
           content: `[Prompt Assisté - Étape 2] Vérification en base de données :\n${dbResultText}`,
         };
         setMessages((prev) => [...prev, dbMsg]);
-        
+
         // Step 3: Propose components based on project
         setTimeout(() => {
           let proposalText = `[Prompt Assisté - Étape 3] Basé sur votre profil étudiant et vos projets en cours, je vous propose également :\n- Kit Arduino Uno (Disponible)\n- Capteurs de température (Disponibles)\n\nSouhaitez-vous faire une demande d'emprunt pour ces composants ?`;
-          
+
           if (items.length > 0) {
-             proposalText = `[Prompt Assisté - Étape 3] Ces composants sont parfaits pour vos projets enregistrés. Souhaitez-vous générer une demande de composant pour ${items[0].nom} ?`;
+            proposalText = `[Prompt Assisté - Étape 3] Ces composants sont parfaits pour vos projets enregistrés. Souhaitez-vous générer une demande de composant pour ${items[0].nom} ?`;
           }
 
           const proposalMsg: Message = {
@@ -149,7 +149,7 @@ export function Chatbot() {
           setMessages((prev) => [...prev, proposalMsg]);
           setIsTyping(false);
         }, 2000);
-        
+
       }, 1500);
 
     } catch (error) {
@@ -193,16 +193,16 @@ export function Chatbot() {
                 </span>
               </div>
             </div>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-8 w-8 text-primary-foreground hover:text-primary-foreground/80 hover:bg-primary-foreground/20 -mr-2" 
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-primary-foreground hover:text-primary-foreground/80 hover:bg-primary-foreground/20 -mr-2"
               onClick={() => setIsOpen(false)}
             >
               <X className="h-5 w-5" />
             </Button>
           </CardHeader>
-          
+
           <CardContent className="flex-1 p-0 overflow-hidden relative bg-muted/30">
             <ScrollArea className="h-full p-4">
               <div className="flex flex-col gap-4">
@@ -219,17 +219,16 @@ export function Chatbot() {
                       )}
                     </Avatar>
                     <div
-                      className={`px-4 py-2 rounded-2xl max-w-[75%] text-sm shadow-sm ${
-                        msg.role === "user"
-                          ? "bg-primary text-primary-foreground rounded-tr-sm"
-                          : "bg-background border rounded-tl-sm text-foreground"
-                      }`}
+                      className={`px-4 py-2 rounded-2xl max-w-[75%] text-sm shadow-sm ${msg.role === "user"
+                        ? "bg-primary text-primary-foreground rounded-tr-sm"
+                        : "bg-background border rounded-tl-sm text-foreground"
+                        }`}
                     >
                       {msg.content}
                     </div>
                   </div>
                 ))}
-                
+
                 {isTyping && (
                   <div className="flex gap-2 w-full flex-row">
                     <Avatar className="h-8 w-8 shrink-0 mt-1 shadow-sm">
@@ -242,12 +241,12 @@ export function Chatbot() {
                     </div>
                   </div>
                 )}
-                
+
                 <div ref={scrollRef} className="h-1" />
               </div>
             </ScrollArea>
           </CardContent>
-          
+
           <CardFooter className="p-3 border-t bg-background rounded-b-xl">
             <form
               className="flex w-full gap-2 items-center"
@@ -262,9 +261,9 @@ export function Chatbot() {
                 onChange={(e) => setInputValue(e.target.value)}
                 className="flex-1 rounded-full border-muted-foreground/20 focus-visible:ring-primary/50"
               />
-              <Button 
-                type="submit" 
-                size="icon" 
+              <Button
+                type="submit"
+                size="icon"
                 disabled={!inputValue.trim() || isTyping}
                 className="rounded-full shrink-0 h-10 w-10 shadow-sm"
               >

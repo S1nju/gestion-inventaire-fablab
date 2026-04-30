@@ -81,6 +81,7 @@ export default async function InventoryPage({ searchParams }: PageProps) {
             armoirs={armoirs || []}
             labos={labos || []}
             canEditDelete={canEditDelete}
+            isAdmin={isAdmin}
           />
 
           {error && <p className="text-destructive text-sm">{error}</p>}

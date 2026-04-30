@@ -91,4 +91,12 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Project::class);
     }
+
+    /**
+     * Component requests from this user
+     */
+    public function componentRequests()
+    {
+        return $this->hasMany(ComponentRequest::class);
+    }
 }
