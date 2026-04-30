@@ -23,7 +23,7 @@ services:
 
   frontend:
     build:
-      context: ./next-shadcn-admin-dashboard
+      context: ./frontend
       dockerfile: Dockerfile
     container_name: inventory-frontend
     working_dir: /app
