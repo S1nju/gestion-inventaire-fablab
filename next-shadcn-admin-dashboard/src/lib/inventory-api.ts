@@ -75,12 +75,25 @@ export interface Encadrant {
   nom: string;
 }
 
+export interface Stats {
+  total_articles: number;
+  total_en_stock: number;
+  total_en_projet: number;
+  total_perdu: number;
+  total_endommage: number;
+  total_projets: number;
+  total_encadrants: number;
+  top_items: { nom: string; quantite_en_stock: number; quantite_en_projet: number; quantite_perdue: number; quantite_endommagee: number }[];
+  by_labo: { nom: string; total_articles: number; total_stock: number }[];
+}
+
 export interface Project {
   id: number;
   titre: string;
   type: string;
   annee_enseignement?: string | null;
-  encadreur_nom?: string | null;
+  encadrant_id?: number | null;
+  encadrant?: Encadrant;
   status: string;
   users?: User[];
   items?: Item[];
@@ -226,4 +239,8 @@ export async function getStudents() {
 
 export async function getEncadrants() {
   return request<Encadrant[]>("encadrants");
+}
+
+export async function getStats() {
+  return request<Stats>("stats");
 }

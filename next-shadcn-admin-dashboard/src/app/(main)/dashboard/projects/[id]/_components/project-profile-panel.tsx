@@ -18,7 +18,7 @@ import {
     detachStudent,
     createStudentForProject,
 } from "@/lib/inventory-api.client";
-import type { Project, Armoir, Casier, Item, User } from "@/lib/inventory-api";
+import type { Project, Armoir, Casier, Item, User, Encadrant } from "@/lib/inventory-api";
 
 interface Props {
     project: Project;
@@ -27,14 +27,15 @@ interface Props {
     allCasiers: Casier[];
     allItems: Item[];
     allStudents: User[];
+    encadrants?: Encadrant[];
 }
 
-export function ProjectProfilePanel({ project: initialProject, isAdmin, allArmoirs, allCasiers, allItems, allStudents }: Props) {
+export function ProjectProfilePanel({ project: initialProject, isAdmin, allArmoirs, allCasiers, allItems, allStudents, encadrants = [] }: Props) {
     const router = useRouter();
     const [project, setProject] = useState(initialProject);
 
-    // ─── Status edit ────────────────────────────────────────────────
-    const [statusForm, setStatusForm] = useState({ status: project.status });
+    // ─── Status & Encadrant edit ────────────────────────────────────────────────
+    const [statusForm, setStatusForm] = useState({ status: project.status, encadrant_id: project.encadrant_id || "" });
 
     async function onSaveStatus() {
         try {
@@ -187,11 +188,21 @@ export function ProjectProfilePanel({ project: initialProject, isAdmin, allArmoi
                         <select
                             className="h-9 rounded-md border border-input bg-transparent px-3 text-sm"
                             value={statusForm.status}
-                            onChange={e => setStatusForm({ status: e.target.value })}
+                            onChange={e => setStatusForm({ ...statusForm, status: e.target.value })}
                         >
                             <option value="active">Actif</option>
                             <option value="terminé">Terminé</option>
                             <option value="archivé">Archivé</option>
+                        </select>
+                        <select
+                            className="h-9 rounded-md border border-input bg-transparent px-3 text-sm flex-1 min-w-[200px]"
+                            value={statusForm.encadrant_id}
+                            onChange={e => setStatusForm({ ...statusForm, encadrant_id: e.target.value })}
+                        >
+                            <option value="">-- Sans Encadrant --</option>
+                            {encadrants.map(en => (
+                                <option key={en.id} value={String(en.id)}>{en.nom}</option>
+                            ))}
                         </select>
                         <Button onClick={onSaveStatus} size="sm">
                             <Save className="size-4 mr-2" /> Enregistrer

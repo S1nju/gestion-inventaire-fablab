@@ -1,4 +1,4 @@
-import { getProjects, getEncadrants } from "@/lib/inventory-api";
+import { getProjects, getEncadrants, getStudents } from "@/lib/inventory-api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAuthenticatedUser } from "@/lib/laravel-auth";
 import { ProjectsCrudPanel } from "./_components/projects-crud-panel";
@@ -14,6 +14,9 @@ export default async function ProjectsPage() {
     const encadrants = await getEncadrants().catch(() => []);
     const encadrantsData = Array.isArray(encadrants) ? encadrants : (encadrants as any)?.data || [];
 
+    const students = await getStudents().catch(() => []);
+    const studentsData = Array.isArray(students) ? students : (students as any)?.data || [];
+
     return (
         <div className="flex flex-col gap-4 md:gap-6">
             <Card>
@@ -22,7 +25,7 @@ export default async function ProjectsPage() {
                     <CardDescription>Les projets actifs et les composants assignés. Imprimez leurs fiches de décharge.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <ProjectsCrudPanel projects={data} encadrants={encadrantsData} isAdmin={isAdmin} currentUserId={currentUserId} />
+                    <ProjectsCrudPanel projects={data} students={studentsData} encadrants={encadrantsData} isAdmin={isAdmin} currentUserId={currentUserId} />
                 </CardContent>
             </Card>
         </div>

@@ -1,4 +1,4 @@
-import { getProject, getArmoirs, getCasiers, getItems, getStudents } from "@/lib/inventory-api";
+import { getProject, getArmoirs, getCasiers, getItems, getStudents, getEncadrants } from "@/lib/inventory-api";
 import { getAuthenticatedUser } from "@/lib/laravel-auth";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,11 +23,12 @@ export default async function ProjectProfilePage({ params }: Props) {
     }
 
     // For item-search: load all armoirs, casiers, and items
-    const [armoirs, casiers, items, students] = await Promise.allSettled([
+    const [armoirs, casiers, items, students, encadrants] = await Promise.allSettled([
         getArmoirs({ per_page: "200" }),
         getCasiers({ per_page: "500" }),
         getItems({ per_page: "500" }),
         getStudents(),
+        getEncadrants(),
     ]);
 
     const armoirsData = armoirs.status === "fulfilled" ? (Array.isArray(armoirs.value) ? armoirs.value : []) : [];
@@ -36,6 +37,7 @@ export default async function ProjectProfilePage({ params }: Props) {
         ? (items.value as any)?.data?.data ?? (items.value as any)?.data ?? (Array.isArray(items.value) ? items.value : [])
         : [];
     const studentsData = students.status === "fulfilled" ? (Array.isArray(students.value) ? students.value : []) : [];
+    const encadrantsData = encadrants.status === "fulfilled" ? (Array.isArray(encadrants.value) ? encadrants.value : (encadrants.value as any)?.data || []) : [];
 
     return (
         <div className="flex flex-col gap-4 md:gap-6">
@@ -48,7 +50,7 @@ export default async function ProjectProfilePage({ params }: Props) {
                         <div className="flex-1 min-w-0">
                             <CardTitle className="truncate">{project.titre}</CardTitle>
                             <CardDescription>
-                                {project.type} • {project.annee_enseignement || "—"} • Encadreur: {project.encadreur_nom || "—"}
+                                {project.type} • {project.annee_enseignement || "—"} • Encadrant: {(project as any).encadrant?.nom || "—"}
                             </CardDescription>
                         </div>
                         <Button asChild variant="secondary">
@@ -66,6 +68,7 @@ export default async function ProjectProfilePage({ params }: Props) {
                         allCasiers={casiersData}
                         allItems={rawItems}
                         allStudents={studentsData}
+                        encadrants={encadrantsData}
                     />
                 </CardContent>
             </Card>

@@ -56,4 +56,44 @@ Route::middleware(['auth:sanctum'])->group(function () {
         if (!$studentRole) return response()->json([]);
         return response()->json($studentRole->users()->select('users.id', 'users.name', 'users.email')->get());
     });
+
+    // Analytics / KPI
+    Route::get('/stats', function () {
+        $items = \App\Models\Item::all();
+        $totalArticles        = $items->count();
+        $totalEnStock         = $items->sum('quantite_en_stock');
+        $totalEnProjet        = $items->sum('quantite_en_projet');
+        $totalPerdu           = $items->sum('quantite_perdue');
+        $totalEndommage       = $items->sum('quantite_endommagee');
+
+        // Top items by usage (in project)
+        $topItems = \App\Models\Item::orderByDesc('quantite_en_projet')->take(10)->get(['nom', 'quantite_en_stock', 'quantite_en_projet', 'quantite_perdue', 'quantite_endommagee']);
+
+        // By Labo
+        $labos = \App\Models\Labo::with('armoirs.casiers.items')->get()->map(function ($labo) {
+            $allItems = collect();
+            foreach ($labo->armoirs as $armoir) {
+                foreach ($armoir->casiers as $casier) {
+                    $allItems = $allItems->merge($casier->items);
+                }
+            }
+            return [
+                'nom'            => $labo->nom,
+                'total_articles' => $allItems->count(),
+                'total_stock'    => $allItems->sum('quantite_en_stock'),
+            ];
+        });
+
+        return response()->json([
+            'total_articles'    => $totalArticles,
+            'total_en_stock'    => $totalEnStock,
+            'total_en_projet'   => $totalEnProjet,
+            'total_perdu'       => $totalPerdu,
+            'total_endommage'   => $totalEndommage,
+            'top_items'         => $topItems,
+            'by_labo'           => $labos,
+            'total_projets'     => \App\Models\Project::count(),
+            'total_encadrants'  => \App\Models\Encadrant::count(),
+        ]);
+    });
 });

@@ -6,6 +6,7 @@ import {
   FileCode2,
   FileDown,
   UserRoundCog,
+  BarChart3,
   type LucideIcon,
 } from "lucide-react";
 
@@ -36,6 +37,17 @@ export interface NavGroup {
 
 export const sidebarItems: NavGroup[] = [
   {
+    id: 0,
+    label: "Vue d'ensemble",
+    items: [
+      {
+        title: "Tableau de Bord",
+        url: "/dashboard/analytics",
+        icon: BarChart3,
+      },
+    ],
+  },
+  {
     id: 1,
     label: "Inventaire & Stock",
     items: [
@@ -61,10 +73,10 @@ export const sidebarItems: NavGroup[] = [
         icon: FileCode2,
       },
       {
-        title: "Fiche de Décharge",
-        url: "/dashboard/print/fiche-decharge",
-        icon: FileDown,
-      },
+        title: "Encadrants",
+        url: "/dashboard/encadrants",
+        icon: UserRoundCog,
+      }
     ],
   },
   {
@@ -75,17 +87,7 @@ export const sidebarItems: NavGroup[] = [
         title: "Labos",
         url: "/dashboard/labos",
         icon: Building2,
-      },
-      {
-        title: "Armoirs",
-        url: "/dashboard/armoirs",
-        icon: LayoutGrid,
-      },
-      {
-        title: "Casiers",
-        url: "/dashboard/casiers",
-        icon: Box,
-      },
+      }
     ],
   },
   {

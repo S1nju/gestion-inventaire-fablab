@@ -15,9 +15,9 @@ class ProjectController extends Controller
     {
         $user = $request->user();
         if ($user->isAdmin()) {
-            return response()->json(Project::with(['users', 'items'])->get());
+            return response()->json(Project::with(['users', 'items', 'encadrant'])->get());
         } else {
-            $projects = $user->projects()->with(['users', 'items'])->get();
+            $projects = $user->projects()->with(['users', 'items', 'encadrant'])->get();
             return response()->json($projects);
         }
     }
@@ -32,7 +32,7 @@ class ProjectController extends Controller
             'titre'             => 'required|string',
             'type'              => 'required|string',
             'annee_enseignement'=> 'nullable|string',
-            'encadreur_nom'     => 'nullable|string',
+            'encadrant_id'      => 'nullable|exists:encadrants,id',
             'status'            => 'sometimes|string|in:active,terminé,archivé',
             'student_ids'       => 'nullable|array',
             'student_ids.*'     => 'exists:users,id',
@@ -44,7 +44,7 @@ class ProjectController extends Controller
             $project->users()->attach($validated['student_ids']);
         }
 
-        return response()->json($project->load('users'), 201);
+        return response()->json($project->load(['users', 'encadrant']), 201);
     }
 
     public function show(Request $request, Project $project)
@@ -56,6 +56,7 @@ class ProjectController extends Controller
 
         return response()->json($project->load([
             'users',
+            'encadrant',
             'items.casier.armoir.labo',
         ]));
     }
@@ -70,13 +71,13 @@ class ProjectController extends Controller
             'titre'             => 'sometimes|string',
             'type'              => 'sometimes|string',
             'annee_enseignement'=> 'nullable|string',
-            'encadreur_nom'     => 'nullable|string',
+            'encadrant_id'      => 'nullable|exists:encadrants,id',
             'status'            => 'sometimes|string|in:active,terminé,archivé',
         ]);
 
         $project->update($validated);
 
-        return response()->json($project->load(['users', 'items']));
+        return response()->json($project->load(['users', 'items', 'encadrant']));
     }
 
     // Add or update items in project (with stock decrease)
@@ -112,7 +113,7 @@ class ProjectController extends Controller
             $item->save();
         }
 
-        return response()->json($project->load(['users', 'items.casier.armoir.labo']));
+        return response()->json($project->load(['users', 'encadrant', 'items.casier.armoir.labo']));
     }
 
     // Remove an item from project and return stock

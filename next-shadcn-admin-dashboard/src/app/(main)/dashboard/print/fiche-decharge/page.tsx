@@ -1,5 +1,6 @@
 import { PrintButton } from "@/components/print-button";
 import { getProject } from "@/lib/inventory-api";
+import Image from "next/image";
 
 export default async function FicheDechargePage({ searchParams }: { searchParams: Promise<{ projectId?: string }> }) {
     const { projectId } = await searchParams;
@@ -20,7 +21,8 @@ export default async function FicheDechargePage({ searchParams }: { searchParams
     }
 
     const students = project.users?.filter(u => u.role === 'student').map(u => u.name).join(", ") || "_____________________";
-    const encadreur = project.encadreur_nom || "_____________________";
+    const encadreur = (project as any).encadrant?.nom || "_____________________";
+    const today = new Date().toLocaleDateString('fr-FR');
 
     // items table formatting
     const items = project.items || [];
@@ -51,8 +53,8 @@ export default async function FicheDechargePage({ searchParams }: { searchParams
                         --T L E M C E N--
                     </div>
 
-                    <div className="w-16 h-16 border rounded-full flex items-center justify-center font-black absolute left-1/2 -translate-x-1/2 top-0">
-                        ESSA
+                    <div className="w-16 h-16 flex items-center justify-center font-black absolute left-1/2 -translate-x-1/2 top-0">
+                        <Image src="/essatlogo.png" alt="ESSA Logo" width={64} height={64} className="object-contain" />
                     </div>
 
                     <div className="text-right w-1/3 font-arabic">
@@ -149,11 +151,11 @@ export default async function FicheDechargePage({ searchParams }: { searchParams
                                 <tr key={i} className="border border-black h-6">
                                     <td className="border border-black p-1">{i + 1}</td>
                                     <td className="border border-black p-1 text-left px-2">{leftItem?.nom || ""}</td>
-                                    <td className="border border-black p-1">{leftItem?.pivot?.quantite || ""}</td>
+                                    <td className="border border-black p-1">{(leftItem as any)?.pivot?.quantite || ""}</td>
 
                                     <td className="border border-black p-1">{i + 1 + half}</td>
                                     <td className="border border-black p-1 text-left px-2">{rightItem?.nom || ""}</td>
-                                    <td className="border border-black p-1">{rightItem?.pivot?.quantite || ""}</td>
+                                    <td className="border border-black p-1">{(rightItem as any)?.pivot?.quantite || ""}</td>
                                 </tr>
                             );
                         })}
@@ -162,7 +164,7 @@ export default async function FicheDechargePage({ searchParams }: { searchParams
 
                 {/* SIGNATURES */}
                 <div className="flex justify-between mt-auto mb-10 font-bold text-sm">
-                    <div>Date : .................</div>
+                    <div>Date : {today}</div>
                     <div>Encadreur</div>
                     <div>Avis du chef de département</div>
                     <div>Avis du directeur des études</div>

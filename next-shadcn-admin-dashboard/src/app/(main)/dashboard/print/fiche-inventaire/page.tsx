@@ -140,16 +140,16 @@ export default async function FicheInventairePage({ searchParams }: PageProps) {
                     items.map((item, index) => (
                       <tr key={item.id}>
                         <td className="border border-black px-2 py-1 align-top print:px-1">{padOrder(index + 1)}</td>
-                        <td className="border border-black px-2 py-1 align-top break-words print:px-1">
+                        <td className="border border-black px-2 py-1 align-top wrap-break-word print:px-1">
                           {item.designation || item.nom || "/"}
                         </td>
                         <td className="border border-black px-2 py-1 align-top print:px-1">
                           {String(item.quantite_en_stock ?? 1).padStart(2, "0")}
                         </td>
-                        <td className="border border-black px-2 py-1 align-top break-words print:px-1">
+                        <td className="border border-black px-2 py-1 align-top wrap-break-word print:px-1">
                           {item.n_inventaire || "/"}
                         </td>
-                        <td className="border border-black px-2 py-1 align-top break-words print:px-1">
+                        <td className="border border-black px-2 py-1 align-top wrap-break-word print:px-1">
                           {item.description || "/"}
                         </td>
                       </tr>

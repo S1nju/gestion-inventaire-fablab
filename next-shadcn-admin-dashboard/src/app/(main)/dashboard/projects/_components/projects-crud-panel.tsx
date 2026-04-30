@@ -10,13 +10,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { createProject, createEncadrant } from "@/lib/inventory-api.client";
-import type { Project, Encadrant } from "@/lib/inventory-api";
+import type { Project, Encadrant, User } from "@/lib/inventory-api";
 
-export function ProjectsCrudPanel({ projects, encadrants, isAdmin, currentUserId }: { projects: Project[], encadrants: Encadrant[], isAdmin: boolean, currentUserId?: number }) {
-    const router = useRouter();
+export function ProjectsCrudPanel({ projects, encadrants, students = [], isAdmin, currentUserId }: { projects: Project[], encadrants: Encadrant[], students?: User[], isAdmin: boolean, currentUserId?: number }) {
     const router = useRouter();
     const [open, setOpen] = useState(false);
-    const [form, setForm] = useState({ titre: "", type: "PFE", annee_enseignement: "", encadrant_id: "", status: "active" });
+    const [searchQuery, setSearchQuery] = useState("");
+    const [form, setForm] = useState<{ titre: string, type: string, annee_enseignement: string, encadrant_id: string, status: string, student_ids: number[] }>({
+        titre: "", type: "PFE", annee_enseignement: "", encadrant_id: "", status: "active", student_ids: []
+    });
 
     const [encadrantOpen, setEncadrantOpen] = useState(false);
     const [newEncadrant, setNewEncadrant] = useState("");
@@ -25,9 +27,8 @@ export function ProjectsCrudPanel({ projects, encadrants, isAdmin, currentUserId
         try {
             await createProject(form);
             toast.success("Projet créé !");
-            toast.success("Projet créé !");
             setOpen(false);
-            setForm({ titre: "", type: "PFE", annee_enseignement: "", encadrant_id: "", status: "active" });
+            setForm({ titre: "", type: "PFE", annee_enseignement: "", encadrant_id: "", status: "active", student_ids: [] });
             router.refresh();
         } catch (e) {
             toast.error(e instanceof Error ? e.message : "Erreur");
@@ -48,15 +49,34 @@ export function ProjectsCrudPanel({ projects, encadrants, isAdmin, currentUserId
         }
     }
 
-    const displayProjects = isAdmin ? projects : projects.filter(p => p.users?.some(u => u.id === currentUserId));
+    const baseProjects = isAdmin ? projects : projects.filter(p => p.users?.some(u => u.id === currentUserId));
+
+    const displayProjects = baseProjects.filter(p => {
+        if (!searchQuery) return true;
+        const query = searchQuery.toLowerCase();
+
+        const titleMatch = p.titre.toLowerCase().includes(query);
+        const typeMatch = p.type.toLowerCase().includes(query);
+        const encadrantMatch = (p as any).encadrant?.nom?.toLowerCase().includes(query) || false;
+
+        return titleMatch || typeMatch || encadrantMatch;
+    });
 
     return (
         <div className="space-y-4">
-            {isAdmin && (
-                <div className="flex justify-end">
-                    <Button onClick={() => setOpen(true)}><Plus className="size-4 mr-2" /> Nouveau Projet</Button>
-                </div>
-            )}
+            <div className="flex justify-between items-center bg-gray-50 p-4 border rounded-lg">
+                <Input
+                    placeholder="Chercher par Titre, Type, ou Encadrant..."
+                    className="max-w-xs bg-white"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                {isAdmin && (
+                    <Button onClick={() => setOpen(true)}>
+                        <Plus className="size-4 mr-2" /> Nouveau Projet
+                    </Button>
+                )}
+            </div>
 
             <Table>
                 <TableHeader>
@@ -127,6 +147,30 @@ export function ProjectsCrudPanel({ projects, encadrants, isAdmin, currentUserId
                                 <Plus className="size-4" />
                             </Button>
                         </div>
+
+                        {students.length > 0 && (
+                            <div>
+                                <label className="text-xs text-muted-foreground block mb-1">
+                                    Étudiants — Ctrl/Cmd pour plusieurs sélections
+                                </label>
+                                <select
+                                    multiple
+                                    className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm h-36"
+                                    value={form.student_ids.map(String)}
+                                    onChange={e => {
+                                        const values = Array.from(e.target.selectedOptions, o => Number(o.value));
+                                        setForm({ ...form, student_ids: values });
+                                    }}
+                                >
+                                    {students.map(s => (
+                                        <option key={s.id} value={String(s.id)}>{s.name} ({s.email})</option>
+                                    ))}
+                                </select>
+                                {form.student_ids.length > 0 && (
+                                    <p className="text-xs text-emerald-600 mt-1">✓ {form.student_ids.length} étudiant(s) sélectionné(s)</p>
+                                )}
+                            </div>
+                        )}
                     </div>
                     <DialogFooter>
                         <Button onClick={onSave} disabled={!form.titre.trim()}>Enregistrer</Button>
@@ -147,5 +191,5 @@ export function ProjectsCrudPanel({ projects, encadrants, isAdmin, currentUserId
                 </DialogContent>
             </Dialog>
         </div>
-    )
+    );
 }
