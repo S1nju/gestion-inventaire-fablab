@@ -1,6 +1,6 @@
 "use client";
 
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Printer, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Barcode } from "@/components/ui/barcode";
 import type { Casier, Armoir, Labo, Item } from "@/lib/inventory-api";
 import { createItem, deleteItem, updateItem } from "@/lib/inventory-api.client";
 
@@ -152,10 +153,14 @@ export function InventoryCrudPanel({ items, casiers, canEditDelete = true }: Pro
   return (
     <div className="space-y-4">
       {canEditDelete && (
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
+          <Button variant="secondary" type="button" onClick={() => window.print()}>
+            <Printer className="mr-2 size-4" />
+            Imprimer Codes-barres
+          </Button>
           <Button type="button" onClick={() => setCreateOpen(true)}>
             <Plus className="mr-2 size-4" />
-            Ajouter un article
+            Ajouter un Composant
           </Button>
         </div>
       )}
@@ -217,7 +222,7 @@ export function InventoryCrudPanel({ items, casiers, canEditDelete = true }: Pro
           <div className="grid grid-cols-2 gap-3">
             <Input className="col-span-2" value={createForm.nom} onChange={(e) => setCreateForm((p) => ({ ...p, nom: e.target.value }))} placeholder="Nom" />
             <Input value={createForm.barcode} onChange={(e) => setCreateForm((p) => ({ ...p, barcode: e.target.value }))} placeholder="Code Barres/Scanner" />
-            <Input value={createForm.n_inventaire} onChange={(e) => setCreateForm((p) => ({ ...p, n_inventaire: e.target.value }))} placeholder="N inventaire" />
+            <Input value={createForm.prix} onChange={(e) => setCreateForm((p) => ({ ...p, prix: e.target.value }))} placeholder="prix" />
 
             <select
               className="h-9 rounded-md border border-input bg-transparent px-2.5 text-sm col-span-2"
@@ -255,7 +260,7 @@ export function InventoryCrudPanel({ items, casiers, canEditDelete = true }: Pro
           <div className="grid grid-cols-2 gap-3">
             <Input className="col-span-2" value={editForm.nom} onChange={(e) => setEditForm((p) => ({ ...p, nom: e.target.value }))} placeholder="Nom" />
             <Input value={editForm.barcode} onChange={(e) => setEditForm((p) => ({ ...p, barcode: e.target.value }))} placeholder="Code Barres/Scanner" />
-            <Input value={editForm.n_inventaire} onChange={(e) => setEditForm((p) => ({ ...p, n_inventaire: e.target.value }))} placeholder="N inventaire" />
+            <Input value={editForm.n_inventaire} onChange={(e) => setEditForm((p) => ({ ...p, n_inventaire: e.target.value }))} placeholder="prix" />
 
             <select
               className="h-9 rounded-md border border-input bg-transparent px-2.5 text-sm col-span-2"
@@ -306,6 +311,28 @@ export function InventoryCrudPanel({ items, casiers, canEditDelete = true }: Pro
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Printable Barcodes Area (Hidden on screen, visible on print) */}
+      <div className="hidden print:block print:fixed print:inset-0 print:bg-white print:z-50 print:p-8 overflow-auto">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-center">Codes-barres Inventaire</h1>
+        </div>
+        <div className="grid grid-cols-3 gap-6">
+          {sortedItems.map((item) => (
+            <div key={item.id} className="border border-gray-400 p-4 flex flex-col items-center justify-center bg-white text-center rounded broken-inside-avoid">
+              <h3 className="font-bold text-sm mb-1 truncate w-full">{item.nom}</h3>
+              <p className="text-[10px] text-gray-500 mb-2 truncate w-full">
+                {item.casier?.nom ?? "-"} ({item.casier?.armoir?.labo?.nom ?? "-"})
+              </p>
+              {item.barcode ? (
+                <Barcode value={item.barcode} width={1.2} height={40} fontSize={10} />
+              ) : (
+                <p className="text-xs text-gray-400 italic">Aucun code-barres</p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
