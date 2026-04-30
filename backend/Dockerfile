@@ -8,10 +8,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libzip-dev \
     libicu-dev \
     libonig-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
     libxml2-dev \
     libsqlite3-dev \
     sqlite3 \
-    && docker-php-ext-install pdo pdo_sqlite mbstring intl bcmath zip \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_sqlite mbstring intl bcmath zip gd dom xml \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

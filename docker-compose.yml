@@ -8,10 +8,10 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/var/www/html
-      - backend_vendor:/var/www/html/vendor
-      - backend_storage:/var/www/html/storage
-      - backend_bootstrap_cache:/var/www/html/bootstrap/cache
+      - ./backend:/var/www/html:z
+      - backend_vendor:/var/www/html/vendor:z
+      - backend_storage:/var/www/html/storage:z
+      - backend_bootstrap_cache:/var/www/html/bootstrap/cache:z
     environment:
       APP_ENV: production
       APP_DEBUG: "false"
@@ -31,12 +31,15 @@ services:
       - "3000:3000"
     depends_on:
       - backend
+    volumes:
+      - ./frontend:/app:z
+      - /app/node_modules
+      - /app/.next
     environment:
       NEXT_TELEMETRY_DISABLED: "1"
-      NODE_ENV: production
+      NODE_ENV: development
       BACKEND_API_URL: http://backend:8000/api
       NEXT_PUBLIC_BACKEND_API_URL: http://${HOST_IP:-localhost}:8000/api
-    # No volumes needed - app is built into the image
 
 volumes:
   backend_vendor:
