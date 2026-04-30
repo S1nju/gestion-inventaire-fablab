@@ -4,107 +4,83 @@ import { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { Bureau, Faculte, Service } from "@/lib/inventory-api";
+import type { Labo, Armoir, Casier } from "@/lib/inventory-api";
 
 interface Props {
   search?: string;
-  printDate: string;
-  bureauId?: string;
-  serviceId?: string;
-  faculteId?: string;
-  bureaus: Bureau[];
-  services: Service[];
-  facultes: Faculte[];
+  printDate?: string;
+  laboId?: string;
+  armoirId?: string;
+  casierId?: string;
+  labos: Labo[];
+  armoirs: Armoir[];
+  casiers: Casier[];
 }
 
 export function FicheFiltersForm({
   search,
   printDate,
-  bureauId,
-  serviceId,
-  faculteId,
-  bureaus,
-  services,
-  facultes,
+  laboId,
+  armoirId,
+  casierId,
+  labos,
+  armoirs,
+  casiers,
 }: Props) {
-  const [selectedBureauId, setSelectedBureauId] = useState(bureauId ?? "");
-  const [selectedServiceId, setSelectedServiceId] = useState(serviceId ?? "");
-  const [selectedFaculteId, setSelectedFaculteId] = useState(faculteId ?? "");
-
-  const selectedBureau = useMemo(
-    () => bureaus.find((bureau) => String(bureau.id) === selectedBureauId),
-    [bureaus, selectedBureauId],
-  );
-
-  const autoServiceId = useMemo(() => {
-    if (!selectedBureau) return "";
-    const id = selectedBureau.service_id ?? selectedBureau.service?.id;
-    return id ? String(id) : "";
-  }, [selectedBureau]);
-
-  const effectiveServiceId = selectedBureauId ? autoServiceId : selectedServiceId;
-
-  const autoFaculteId = useMemo(() => {
-    if (!effectiveServiceId) return "";
-
-    const service = services.find((s) => String(s.id) === effectiveServiceId);
-    const id = service?.faculte_id ?? service?.faculte?.id;
-    return id ? String(id) : "";
-  }, [effectiveServiceId, services]);
-
-  const effectiveFaculteId = selectedBureauId ? autoFaculteId : selectedFaculteId;
-  const lockHierarchy = selectedBureauId !== "";
+  const [selectedLaboId, setSelectedLaboId] = useState(laboId ?? "");
+  const [selectedArmoirId, setSelectedArmoirId] = useState(armoirId ?? "");
+  const [selectedCasierId, setSelectedCasierId] = useState(casierId ?? "");
 
   return (
-    <form method="GET" className="mb-4 grid grid-cols-1 gap-2 md:grid-cols-6 print:hidden">
-      <Input name="search" placeholder="Nom / designation" defaultValue={search ?? ""} />
-
-      <input name="faculte_id" type="hidden" value={effectiveFaculteId} />
-      <select
-        value={effectiveFaculteId}
-        disabled={lockHierarchy}
-        onChange={(e) => setSelectedFaculteId(e.target.value)}
-        className="h-9 rounded-md border border-input bg-transparent px-2.5 text-sm disabled:opacity-100"
-      >
-        <option value="">Toutes les facultes</option>
-        {facultes.map((faculte) => (
-          <option key={faculte.id} value={String(faculte.id)}>
-            {faculte.nom}
-          </option>
-        ))}
-      </select>
-
-      <input name="service_id" type="hidden" value={effectiveServiceId} />
-      <select
-        value={effectiveServiceId}
-        disabled={lockHierarchy}
-        onChange={(e) => setSelectedServiceId(e.target.value)}
-        className="h-9 rounded-md border border-input bg-transparent px-2.5 text-sm disabled:opacity-100"
-      >
-        <option value="">Tous les services</option>
-        {services.map((service) => (
-          <option key={service.id} value={String(service.id)}>
-            {service.nom}
-          </option>
-        ))}
-      </select>
+    <form className="mb-6 grid grid-cols-1 gap-3 md:grid-cols-4 print:hidden" method="GET">
+      <Input name="search" placeholder="Nom / designation" defaultValue={search ?? ""} className="col-span-2" />
+      <Input name="date" placeholder="Date d'impression (ex: 20/05/2026)" defaultValue={printDate ?? ""} className="col-span-2" />
 
       <select
-        name="bureau_id"
-        value={selectedBureauId}
-        onChange={(e) => setSelectedBureauId(e.target.value)}
+        name="labo_id"
+        value={selectedLaboId}
+        onChange={(e) => setSelectedLaboId(e.target.value)}
         className="h-9 rounded-md border border-input bg-transparent px-2.5 text-sm"
       >
-        <option value="">Tous les bureaux</option>
-        {bureaus.map((bureau) => (
-          <option key={bureau.id} value={String(bureau.id)}>
-            {bureau.nom}
+        <option value="">Tous les labos</option>
+        {labos.map((labo) => (
+          <option key={labo.id} value={String(labo.id)}>
+            {labo.nom}
           </option>
         ))}
       </select>
 
-      <Input name="date" placeholder="Date impression (jj/mm/aaaa)" defaultValue={printDate} />
-      <Button type="submit">Appliquer</Button>
+      <select
+        name="armoir_id"
+        value={selectedArmoirId}
+        onChange={(e) => setSelectedArmoirId(e.target.value)}
+        className="h-9 rounded-md border border-input bg-transparent px-2.5 text-sm"
+      >
+        <option value="">Toutes les armoirs</option>
+        {armoirs.map((armoir) => (
+          <option key={armoir.id} value={String(armoir.id)}>
+            {armoir.nom}
+          </option>
+        ))}
+      </select>
+
+      <select
+        name="casier_id"
+        value={selectedCasierId}
+        onChange={(e) => setSelectedCasierId(e.target.value)}
+        className="h-9 rounded-md border border-input bg-transparent px-2.5 text-sm"
+      >
+        <option value="">Tous les casiers</option>
+        {casiers.map((casier) => (
+          <option key={casier.id} value={String(casier.id)}>
+            {casier.nom}
+          </option>
+        ))}
+      </select>
+
+      <div className="flex gap-2">
+        <Button type="submit">Actualiser la fiche</Button>
+      </div>
     </form>
   );
 }

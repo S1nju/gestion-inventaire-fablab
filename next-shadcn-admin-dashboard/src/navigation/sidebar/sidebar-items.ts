@@ -1,13 +1,12 @@
 import {
   Building2,
-  ClipboardList,
-  GraduationCap,
-  Landmark,
-  MoveHorizontal,
   PackageSearch,
-  type LucideIcon,
+  Box,
+  LayoutGrid,
+  FileCode2,
+  FileDown,
   UserRoundCog,
-  Users,
+  type LucideIcon,
 } from "lucide-react";
 
 export interface NavSubItem {
@@ -38,7 +37,7 @@ export interface NavGroup {
 export const sidebarItems: NavGroup[] = [
   {
     id: 1,
-    label: "Inventaire",
+    label: "Inventaire & Stock",
     items: [
       {
         title: "Inventaire",
@@ -46,35 +45,53 @@ export const sidebarItems: NavGroup[] = [
         icon: PackageSearch,
       },
       {
-        title: "Responsables",
-        url: "/dashboard/responsables",
-        icon: Users,
+        title: "Demandes (Composants)",
+        url: "/dashboard/component-requests",
+        icon: FileDown,
+      },
+    ],
+  },
+  {
+    id: 2,
+    label: "Gestion des Projets",
+    items: [
+      {
+        title: "Projets",
+        url: "/dashboard/projects",
+        icon: FileCode2,
       },
       {
-        title: "Facultes",
-        url: "/dashboard/faculties",
-        icon: GraduationCap,
+        title: "Fiche de Décharge",
+        url: "/dashboard/print/fiche-decharge",
+        icon: FileDown,
       },
+    ],
+  },
+  {
+    id: 3,
+    label: "Structure Physique",
+    items: [
       {
-        title: "Services",
-        url: "/dashboard/services",
+        title: "Labos",
+        url: "/dashboard/labos",
         icon: Building2,
       },
       {
-        title: "Bureaux",
-        url: "/dashboard/bureaus",
-        icon: Landmark,
+        title: "Armoirs",
+        url: "/dashboard/armoirs",
+        icon: LayoutGrid,
       },
       {
-        title: "Mouvements",
-        url: "/dashboard/movements",
-        icon: MoveHorizontal,
+        title: "Casiers",
+        url: "/dashboard/casiers",
+        icon: Box,
       },
-      {
-        title: "Fiche d'inventaire",
-        url: "/dashboard/print/fiche-inventaire",
-        icon: ClipboardList,
-      },
+    ],
+  },
+  {
+    id: 4,
+    label: "Paramètres",
+    items: [
       {
         title: "Profil",
         url: "/dashboard/profile",

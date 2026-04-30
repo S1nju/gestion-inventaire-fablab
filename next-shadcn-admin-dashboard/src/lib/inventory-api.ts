@@ -12,92 +12,95 @@ export interface ApiResponse<T> {
   data: T;
 }
 
-export interface Faculte {
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  role?: string;
+}
+
+export interface Labo {
   id: number;
   nom: string;
   description?: string | null;
-  doyen?: string | null;
-  email?: string | null;
+  armoirs?: Armoir[];
 }
 
-export interface Service {
+export interface Armoir {
   id: number;
   nom: string;
-  description?: string | null;
-  responsable_principal?: string | null;
-  faculte_id?: number | null;
-  faculte?: Faculte | null;
+  barcode: string;
+  labo_id: number;
+  labo?: Labo;
+  casiers?: Casier[];
 }
 
-export interface Bureau {
+export interface CasierType {
   id: number;
   nom: string;
-  description?: string | null;
-  localisation?: string | null;
-  service_id?: number | null;
-  service?: Service | null;
 }
 
-export interface Responsable {
+export interface Casier {
   id: number;
   nom: string;
-  email?: string | null;
-  telephone?: string | null;
-  titre?: string | null;
-  bureau_id?: number | null;
-  service_id?: number | null;
-  bureau?: Bureau | null;
-  service?: Service | null;
-}
-
-export interface Assignment {
-  id: number;
-  article_id: number;
-  responsable_id: number;
-  date_affectation?: string | null;
-  date_retrait?: string | null;
-  quantite_affectee?: number | null;
-  notes?: string | null;
-  responsable?: Responsable | null;
-  transferred_from?: Responsable | null;
-  item?: Item | null;
-}
-
-export interface ItemMovementHistoryEntry {
-  id: number;
-  item_id: number;
-  responsible_id?: number | null;
-  previous_responsible_id?: number | null;
-  action_type: string;
-  quantity?: number | null;
-  notes?: string | null;
-  created_at?: string;
-  item?: Item | null;
-  responsible?: Responsable | null;
-  previous_responsible?: Responsable | null;
+  barcode: string;
+  armoir_id: number;
+  casier_type_id?: number | null;
+  armoir?: Armoir;
+  type?: CasierType;
+  items?: Item[];
 }
 
 export interface Item {
   id: number;
+  n_inventaire?: string;
+  barcode?: string;
   nom: string;
-  designation?: string | null;
-  n_inventaire?: string | null;
-  n_decharge?: string | null;
-  description?: string | null;
-  quantite?: number;
-  bureau_id?: number | null;
-  bureau?: Bureau | null;
-  assignments?: Assignment[];
-  current_responsible?: Assignment | null;
+  description?: string;
+  unite?: string;
+  casier_id?: number | null;
+  casier?: Casier;
+  quantite_en_stock: number;
+  quantite_en_projet: number;
+  quantite_perdue: number;
+  quantite_endommagee: number;
+  fournisseur_id?: number;
+  prix?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Encadrant {
+  id: number;
+  nom: string;
+}
+
+export interface Project {
+  id: number;
+  titre: string;
+  type: string;
+  annee_enseignement?: string | null;
+  encadreur_nom?: string | null;
+  status: string;
+  users?: User[];
+  items?: Item[];
+}
+
+export interface ComponentRequest {
+  id: number;
+  user_id: number;
+  nom_composant: string;
+  quantite: number;
+  status: string;
+  student?: User;
 }
 
 export interface InventoryFilters {
   [key: string]: string | undefined;
   search?: string;
-  n_inventaire?: string;
-  bureau_id?: string;
-  service_id?: string;
-  faculte_id?: string;
+  barcode?: string;
+  casier_id?: string;
+  armoir_id?: string;
   page?: string;
   per_page?: string;
 }
@@ -108,12 +111,13 @@ const apiBaseUrl =
 const bearerToken = process.env.BACKEND_BEARER_TOKEN ?? process.env.NEXT_PUBLIC_BACKEND_BEARER_TOKEN;
 
 function withQuery(path: string, params?: Record<string, string | undefined>) {
-  if (!params) return path;
-
   const url = new URL(path, apiBaseUrl.endsWith("/") ? apiBaseUrl : `${apiBaseUrl}/`);
-  for (const [key, value] of Object.entries(params)) {
-    if (value && value.trim() !== "") {
-      url.searchParams.set(key, value);
+
+  if (params) {
+    for (const [key, value] of Object.entries(params)) {
+      if (value && value.trim() !== "") {
+        url.searchParams.set(key, value);
+      }
     }
   }
 
@@ -139,7 +143,6 @@ async function getServerCookieHeader() {
     return undefined;
   }
 }
-
 
 async function getServerAuthToken() {
   if (typeof window !== "undefined") {
@@ -184,42 +187,43 @@ async function request<T>(path: string, params?: Record<string, string | undefin
   return response.json() as Promise<T>;
 }
 
+// Data Fetchers
 export async function getItems(filters: InventoryFilters) {
   return request<ApiResponse<PaginatedResponse<Item>>>("items", filters);
-}
-
-export async function getResponsables(params?: Record<string, string | undefined>) {
-  return request<ApiResponse<PaginatedResponse<Responsable>>>("responsables", params);
-}
-
-export async function getBureaus(params?: Record<string, string | undefined>) {
-  return request<ApiResponse<PaginatedResponse<Bureau>>>("bureaus", params);
-}
-
-export async function getFacultes(params?: Record<string, string | undefined>) {
-  return request<ApiResponse<PaginatedResponse<Faculte>>>("facultes", params);
-}
-
-export async function getServices(params?: Record<string, string | undefined>) {
-  return request<ApiResponse<PaginatedResponse<Service>>>("services", params);
-}
-
-export async function getAssignments(params?: Record<string, string | undefined>) {
-  return request<ApiResponse<PaginatedResponse<Assignment>>>("article-responsables", params);
-}
-
-export async function getItemMovements(params?: Record<string, string | undefined>) {
-  return request<ApiResponse<PaginatedResponse<ItemMovementHistoryEntry>>>("item-movements", params);
-}
-
-export async function getItemMovementHistory(itemId: string, params?: Record<string, string | undefined>) {
-  return request<ApiResponse<PaginatedResponse<ItemMovementHistoryEntry>>>(`items/${itemId}/movement-history`, params);
 }
 
 export async function getItem(itemId: string) {
   return request<ApiResponse<Item>>(`items/${itemId}`);
 }
 
-export async function getResponsable(responsableId: string) {
-  return request<ApiResponse<Responsable>>(`responsables/${responsableId}`);
+export async function getLabos(params?: Record<string, string | undefined>) {
+  return request<Labo[]>("labos", params);
+}
+
+export async function getArmoirs(params?: Record<string, string | undefined>) {
+  return request<Armoir[]>("armoirs", params);
+}
+
+export async function getCasiers(params?: Record<string, string | undefined>) {
+  return request<Casier[]>("casiers", params);
+}
+
+export async function getProjects(params?: Record<string, string | undefined>) {
+  return request<Project[]>("projects", params);
+}
+
+export async function getProject(projectId: string) {
+  return request<Project>(`projects/${projectId}`);
+}
+
+export async function getComponentRequests(params?: Record<string, string | undefined>) {
+  return request<ComponentRequest[]>("component-requests", params);
+}
+
+export async function getStudents() {
+  return request<User[]>("users/students");
+}
+
+export async function getEncadrants() {
+  return request<Encadrant[]>("encadrants");
 }

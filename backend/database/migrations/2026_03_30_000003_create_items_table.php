@@ -13,18 +13,29 @@ return new class extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
+            $table->string('n_inventaire')->nullable()->unique()->comment('N° in Excel');
+            $table->string('fournisseur_code')->nullable();
+            $table->decimal('prix', 10, 2)->nullable();
             $table->string('nom');
-            $table->string('designation')->nullable()->comment('Item designation/type');
-            $table->string('n_inventaire')->nullable()->unique()->comment('Inventory number');
-            $table->string('n_decharge')->nullable()->comment('Discharge/statement number');
+            $table->string('type_composant')->nullable();
+            
+            // Barcode added for scanner searching
+            $table->string('barcode')->nullable()->unique();
+            
+            // Tracking quantities instead of a single quantity
+            $table->integer('quantite_en_stock')->default(0);
+            $table->integer('quantite_en_projet')->default(0);
+            $table->integer('quantite_endommagee')->default(0);
+            $table->integer('quantite_perdue')->default(0);
+            
+            // Physical location
+            $table->foreignId('casier_id')->nullable()->constrained('casiers')->nullOnDelete();
+            
             $table->text('description')->nullable();
-            $table->integer('quantite')->default(0);
-            $table->foreignId('fournisseur_id')->nullable()->constrained('fournisseurs')->onDelete('set null');
             $table->timestamps();
             
-            $table->index('fournisseur_id');
             $table->index('n_inventaire');
-            $table->index('n_decharge');
+            $table->index('barcode');
         });
     }
 

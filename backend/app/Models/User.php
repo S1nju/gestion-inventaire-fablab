@@ -69,18 +69,26 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if user is admin/editor
+     * Check if user is admin
      */
-    public function isEditor(): bool
+    public function isAdmin(): bool
     {
-        return $this->hasRole('editor');
+        return $this->hasRole('admin');
     }
 
     /**
-     * Check if user is viewer only
+     * Check if user is student
      */
-    public function isViewer(): bool
+    public function isStudent(): bool
     {
-        return $this->hasRole('viewer');
+        return $this->hasRole('student');
+    }
+
+    /**
+     * Projects this user belongs to
+     */
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class);
     }
 }

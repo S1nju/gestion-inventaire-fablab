@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Labo;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -15,13 +16,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Seed fixed accounts for Breeze login tests and dashboard access.
+        // 1. Seed Accounts
         $users = [
-            ['name' => 'Inventory Admin', 'email' => 'admin@inventory.local', 'password' => 'password'],
-            ['name' => 'Faculty Manager', 'email' => 'faculty@inventory.local', 'password' => 'password'],
-            ['name' => 'Service Responsable', 'email' => 'service@inventory.local', 'password' => 'password'],
-            ['name' => 'Bureau Agent', 'email' => 'agent@inventory.local', 'password' => 'password'],
-            ['name' => 'Test User', 'email' => 'test@example.com', 'password' => 'password'],
+            ['name' => 'Admin Account', 'email' => 'admin@inventory.local', 'password' => 'password'],
+            ['name' => 'Student Account', 'email' => 'student@inventory.local', 'password' => 'password'],
         ];
 
         foreach ($users as $user) {
@@ -31,9 +29,13 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        User::factory(5)->create();
+        // 2. Seed Labos
+        Labo::firstOrCreate(['nom' => 'Labo 1'], ['description' => 'Laboratory 1']);
+        Labo::firstOrCreate(['nom' => 'Labo 3'], ['description' => 'Laboratory 3']);
 
-        // Run role and permission seeder
-        $this->call(RolePermissionSeeder::class);
+        // Run role and permission seeder if it exists and handles new roles
+        if (class_exists(RolePermissionSeeder::class)) {
+            $this->call(RolePermissionSeeder::class);
+        }
     }
 }

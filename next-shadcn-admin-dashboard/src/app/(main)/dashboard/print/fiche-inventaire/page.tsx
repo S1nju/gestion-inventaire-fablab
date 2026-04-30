@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PrintButton } from "@/components/print-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getBureaus, getFacultes, getItems, getServices } from "@/lib/inventory-api";
+import { getLabos, getArmoirs, getCasiers, getItems } from "@/lib/inventory-api";
 
 import { FicheFiltersForm } from "./_components/fiche-filters-form";
 
@@ -28,44 +28,29 @@ function formatDate(value: Date) {
 
 export default async function FicheInventairePage({ searchParams }: PageProps) {
   const params = await searchParams;
-  const bureauId = pickFirstParam(params.bureau_id);
-  const serviceId = pickFirstParam(params.service_id);
-  const faculteId = pickFirstParam(params.faculte_id);
+  const laboId = pickFirstParam(params.labo_id);
+  const armoirId = pickFirstParam(params.armoir_id);
+  const casierId = pickFirstParam(params.casier_id);
   const search = pickFirstParam(params.search);
   const printDate = pickFirstParam(params.date);
 
   let error: string | null = null;
-  let bureausResponse: Awaited<ReturnType<typeof getBureaus>> | undefined;
-  let servicesResponse: Awaited<ReturnType<typeof getServices>> | undefined;
-  let facultesResponse: Awaited<ReturnType<typeof getFacultes>> | undefined;
-  let response: Awaited<ReturnType<typeof getItems>> | undefined;
+  let labosResponse = [];
+  let armoirsResponse = [];
+  let casiersResponse = [];
+  let response;
 
   try {
-    [bureausResponse, servicesResponse, facultesResponse] = await Promise.all([
-      getBureaus({ per_page: "200" }),
-      getServices({ per_page: "200" }),
-      getFacultes({ per_page: "200" }),
+    [labosResponse, armoirsResponse, casiersResponse] = await Promise.all([
+      getLabos({ per_page: "200" }),
+      getArmoirs({ per_page: "200" }),
+      getCasiers({ per_page: "200" }),
     ]);
 
-    const bureaus = bureausResponse?.data?.data ?? [];
-    const services = servicesResponse?.data?.data ?? [];
-
-    const selectedBureau = bureauId ? bureaus.find((b) => String(b.id) === bureauId) : undefined;
-    const effectiveServiceId =
-      selectedBureau !== undefined
-        ? String(selectedBureau.service_id ?? selectedBureau.service?.id ?? "") || undefined
-        : serviceId;
-
-    const selectedService = effectiveServiceId ? services.find((s) => String(s.id) === effectiveServiceId) : undefined;
-    const effectiveFaculteId =
-      selectedBureau !== undefined
-        ? String(selectedService?.faculte_id ?? selectedService?.faculte?.id ?? "") || undefined
-        : faculteId;
-
     response = await getItems({
-      bureau_id: bureauId,
-      service_id: effectiveServiceId,
-      faculte_id: effectiveFaculteId,
+      labo_id: laboId,
+      armoir_id: armoirId,
+      casier_id: casierId,
       search,
       per_page: "200",
     });
@@ -74,22 +59,12 @@ export default async function FicheInventairePage({ searchParams }: PageProps) {
   }
 
   const items = response?.data?.data ?? [];
-  const bureaus = bureausResponse?.data?.data ?? [];
-  const services = servicesResponse?.data?.data ?? [];
-  const facultes = facultesResponse?.data?.data ?? [];
-  const selectedBureau = bureauId ? bureaus.find((b) => String(b.id) === bureauId) : undefined;
-  const effectiveServiceId =
-    selectedBureau !== undefined
-      ? String(selectedBureau.service_id ?? selectedBureau.service?.id ?? "") || undefined
-      : serviceId;
-  const selectedService = effectiveServiceId ? services.find((s) => String(s.id) === effectiveServiceId) : undefined;
-  const effectiveFaculteId =
-    selectedBureau !== undefined
-      ? String(selectedService?.faculte_id ?? selectedService?.faculte?.id ?? "") || undefined
-      : faculteId;
-  const bureauLabel = bureaus.find((b) => String(b.id) === bureauId)?.nom ?? "Tous";
-  const serviceLabel = services.find((s) => String(s.id) === effectiveServiceId)?.nom ?? "Tous";
-  const faculteLabel = facultes.find((f) => String(f.id) === effectiveFaculteId)?.nom ?? "Toutes";
+  const labos = labosResponse ?? [];
+  const armoirs = armoirsResponse ?? [];
+  const casiers = casiersResponse ?? [];
+
+  const laboLabel = laboId ? labos.find((l) => String(l.id) === laboId)?.nom : "Tous";
+  const armoirLabel = armoirId ? armoirs.find((a) => String(a.id) === armoirId)?.nom : "Tous";
   const dateLabel = printDate && printDate.trim() !== "" ? printDate : formatDate(new Date());
 
   return (
@@ -110,12 +85,12 @@ export default async function FicheInventairePage({ searchParams }: PageProps) {
           <FicheFiltersForm
             search={search}
             printDate={dateLabel}
-            bureauId={bureauId}
-            serviceId={effectiveServiceId}
-            faculteId={effectiveFaculteId}
-            bureaus={bureaus}
-            services={services}
-            facultes={facultes}
+            laboId={laboId}
+            armoirId={armoirId}
+            casierId={casierId}
+            labos={labos}
+            armoirs={armoirs}
+            casiers={casiers}
           />
 
           {error ? <p className="text-destructive text-sm">{error}</p> : null}
@@ -124,17 +99,19 @@ export default async function FicheInventairePage({ searchParams }: PageProps) {
             <div className="grid grid-cols-3 gap-4 text-sm">
               <div className="space-y-1">
                 <p className="font-medium">Universite Abou Bekr Belkaid Telemcen</p>
-                <p>Service des moyens et maintenance</p>
-                <p>{faculteLabel}</p>
+                <p>Faculte de Technologie</p>
+                <p>{laboLabel !== "Tous" ? laboLabel : "Tous les labos"}</p>
               </div>
 
               <div className="flex items-center justify-center">
-                <img src="/logo.jpg" alt="University logo" className="h-16 w-16 object-contain" />
+                <div className="h-16 w-16 bg-gray-200 flex items-center justify-center text-[10px] font-bold border border-black rounded-full">
+                  ESSA
+                </div>
               </div>
 
               <div className="space-y-1 text-right">
-                <p className="font-medium">{`BUREAU N°: ${bureauLabel}`}</p>
-                <p>{`SERVICE: ${serviceLabel}`}</p>
+                <p className="font-medium">{`LABO: ${laboLabel}`}</p>
+                <p>{`ARMOIR: ${armoirLabel}`}</p>
                 <p>&nbsp;</p>
               </div>
             </div>
@@ -167,7 +144,7 @@ export default async function FicheInventairePage({ searchParams }: PageProps) {
                           {item.designation || item.nom || "/"}
                         </td>
                         <td className="border border-black px-2 py-1 align-top print:px-1">
-                          {String(item.quantite ?? 1).padStart(2, "0")}
+                          {String(item.quantite_en_stock ?? 1).padStart(2, "0")}
                         </td>
                         <td className="border border-black px-2 py-1 align-top break-words print:px-1">
                           {item.n_inventaire || "/"}
@@ -183,7 +160,7 @@ export default async function FicheInventairePage({ searchParams }: PageProps) {
             </div>
 
             <div className="mt-8 flex items-end justify-between text-sm">
-              <p className="font-medium uppercase">LE RESPONSABLE DU SERVICE</p>
+              <p className="font-medium uppercase">LE RESPONSABLE</p>
               <p className="font-medium uppercase">{`TLEMCEN LE ${dateLabel}`}</p>
             </div>
           </div>
