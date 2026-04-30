@@ -76,13 +76,26 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
   const collapsible = isSynced ? sidebarCollapsible : props.collapsible;
 
   return (
-    <Sidebar {...props} variant={variant} collapsible={collapsible}>
+    <Sidebar
+      {...props}
+      variant={variant}
+      collapsible={collapsible}
+      style={{
+        "--sidebar": "#2E7D8C",
+        "--sidebar-foreground": "white",
+        "--sidebar-accent": "#266b78",
+        "--sidebar-accent-foreground": "white",
+        "--sidebar-border": "#2E7D8C"
+      } as React.CSSProperties}
+    >
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link prefetch={false} href="/dashboard/inventory" className="flex items-center gap-2">
-                <img src="/dashboardlogo.png" alt="FabStock Logo" className="h-8 w-auto object-contain" />
+                <div className=" rounded-md px-2 py-1 items-center flex justify-center shadow-xs">
+                  <img src="/dashboardlogo.png" alt="FabStock Logo" className="h-9 w-auto object-contain" />
+                </div>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
