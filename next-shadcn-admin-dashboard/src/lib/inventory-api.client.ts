@@ -59,6 +59,7 @@ export async function createEncadrant(payload: Record<string, unknown>) { return
 // Projects
 export async function createProject(payload: Record<string, unknown>) { return apiRequest("projects", "POST", payload); }
 export async function updateProject(projectId: number, payload: Record<string, unknown>) { return apiRequest(`projects/${projectId}`, "PUT", payload); }
+export async function deleteProject(projectId: number) { return apiRequest(`projects/${projectId}`, "DELETE"); }
 export async function addProjectItems(projectId: number, payload: Record<string, unknown>) { return apiRequest(`projects/${projectId}/add-items`, "POST", payload); }
 export async function removeProjectItem(projectId: number, itemId: number) { return apiRequest(`projects/${projectId}/remove-item/${itemId}`, "DELETE"); }
 export async function updateProjectItemStatus(projectId: number, itemId: number, payload: Record<string, unknown>) { return apiRequest(`projects/${projectId}/update-item-status/${itemId}`, "POST", payload); }

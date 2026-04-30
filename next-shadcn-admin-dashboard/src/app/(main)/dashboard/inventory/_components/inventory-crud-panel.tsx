@@ -155,7 +155,7 @@ export function InventoryCrudPanel({ items, casiers, canEditDelete = true }: Pro
         <div className="flex justify-end">
           <Button type="button" onClick={() => setCreateOpen(true)}>
             <Plus className="mr-2 size-4" />
-            Ajouter un article
+            Ajouter un Composant
           </Button>
         </div>
       )}
@@ -217,7 +217,7 @@ export function InventoryCrudPanel({ items, casiers, canEditDelete = true }: Pro
           <div className="grid grid-cols-2 gap-3">
             <Input className="col-span-2" value={createForm.nom} onChange={(e) => setCreateForm((p) => ({ ...p, nom: e.target.value }))} placeholder="Nom" />
             <Input value={createForm.barcode} onChange={(e) => setCreateForm((p) => ({ ...p, barcode: e.target.value }))} placeholder="Code Barres/Scanner" />
-            <Input value={createForm.n_inventaire} onChange={(e) => setCreateForm((p) => ({ ...p, n_inventaire: e.target.value }))} placeholder="N inventaire" />
+            <Input value={createForm.prix} onChange={(e) => setCreateForm((p) => ({ ...p, prix: e.target.value }))} placeholder="N inventaire" />
 
             <select
               className="h-9 rounded-md border border-input bg-transparent px-2.5 text-sm col-span-2"

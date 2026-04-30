@@ -172,54 +172,71 @@ These serve as the fallback; there is no separate default.css file. */
   html[data-font="inter"] body {
     --font-sans: var(--font-inter);
   }
+
   html[data-font="notoSans"] body {
     --font-sans: var(--font-noto-sans);
   }
+
   html[data-font="nunitoSans"] body {
     --font-sans: var(--font-nunito-sans);
   }
+
   html[data-font="figtree"] body {
     --font-sans: var(--font-figtree);
   }
+
   html[data-font="roboto"] body {
     --font-sans: var(--font-roboto);
   }
+
   html[data-font="geist"] body {
     --font-sans: var(--font-geist);
   }
+
   html[data-font="raleway"] body {
     --font-sans: var(--font-raleway);
   }
+
   html[data-font="dmSans"] body {
     --font-sans: var(--font-dm-sans);
   }
+
   html[data-font="publicSans"] body {
     --font-sans: var(--font-public-sans);
   }
+
   html[data-font="outfit"] body {
     --font-sans: var(--font-outfit);
   }
+
   html[data-font="geistMono"] body {
     --font-sans: var(--font-geist-mono);
   }
+
   html[data-font="geistPixelSquare"] body {
     --font-sans: var(--font-geist-pixel-square);
   }
+
   html[data-font="jetBrainsMono"] body {
     --font-sans: var(--font-jetbrains-mono);
   }
+
   html[data-font="notoSerif"] body {
     --font-sans: var(--font-noto-serif);
   }
+
   html[data-font="robotoSlab"] body {
     --font-sans: var(--font-roboto-slab);
   }
+
   html[data-font="merriweather"] body {
     --font-sans: var(--font-merriweather);
   }
+
   html[data-font="lora"] body {
     --font-sans: var(--font-lora);
   }
+
   html[data-font="playfairDisplay"] body {
     --font-sans: var(--font-playfair-display);
   }
@@ -256,4 +273,21 @@ html {
 
 .disable-transitions * {
   transition: none !important;
+}
+
+/* Custom user theme overrides */
+:root,
+.dark {
+  --sidebar: oklch(0.53 0.08 221) !important;
+  --sidebar-foreground: oklch(1 0 0) !important;
+  --sidebar-accent: oklch(0.50 0.08 221) !important;
+  --sidebar-accent-foreground: oklch(1 0 0) !important;
+  --sidebar-primary: oklch(0.40 0.08 221) !important;
+  --sidebar-primary-foreground: oklch(1 0 0) !important;
+  --sidebar-border: oklch(0.40 0.08 221) !important;
+
+  /* Change all standard blue brand colors to #2E7D8C */
+  --primary: oklch(0.53 0.08 221) !important;
+  --primary-foreground: oklch(1 0 0) !important;
+  --ring: oklch(0.53 0.08 221) !important;
 }

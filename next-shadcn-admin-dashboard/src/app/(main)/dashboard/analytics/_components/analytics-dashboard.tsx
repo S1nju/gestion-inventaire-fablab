@@ -8,7 +8,7 @@ import type { Stats } from "@/lib/inventory-api";
 import { Package, PackageCheck, PackageX, AlertTriangle, FolderOpen, Users } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-const COLORS = ["#6366f1", "#f59e0b", "#ef4444", "#10b981", "#3b82f6", "#ec4899"];
+const COLORS = ["#2E7D8C", "#f59e0b", "#ef4444", "#10b981", "#1c4b54", "#ec4899"];
 
 function KpiCard({ label, value, icon: Icon, color }: { label: string; value: number; icon: React.ElementType; color: string }) {
     return (
@@ -112,8 +112,8 @@ export function AnalyticsDashboard({ stats }: { stats: Stats }) {
                                     <YAxis />
                                     <Tooltip />
                                     <Legend />
-                                    <Bar dataKey="En Stock" fill="#6366f1" radius={[4, 4, 0, 0]} />
-                                    <Bar dataKey="En Projet" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                                    <Bar dataKey="En Stock" fill="#2E7D8C" radius={[4, 4, 0, 0]} />
+                                    <Bar dataKey="En Projet" fill="#1c4b54" radius={[4, 4, 0, 0]} />
                                     <Bar dataKey="Perdus" fill="#ef4444" radius={[4, 4, 0, 0]} />
                                 </BarChart>
                             </ResponsiveContainer>
@@ -137,7 +137,7 @@ export function AnalyticsDashboard({ stats }: { stats: Stats }) {
                                 <YAxis />
                                 <Tooltip />
                                 <Legend />
-                                <Bar dataKey="Articles" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                                <Bar dataKey="Articles" fill="#2E7D8C" radius={[4, 4, 0, 0]} />
                                 <Bar dataKey="En Stock" fill="#10b981" radius={[4, 4, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>

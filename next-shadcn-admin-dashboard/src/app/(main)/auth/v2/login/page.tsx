@@ -18,10 +18,11 @@ export default async function LoginV2() {
 
   return (
     <>
-      <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-[350px]">
-        <div className="space-y-2 text-center">
-          <h1 className="font-medium text-3xl">Login to your account</h1>
-          <p className="text-muted-foreground text-sm">Please enter your details to login.</p>
+      <div className="mx-auto  flex w-full flex-col justify-center space-y-8 sm:w-[350px]">
+        <div className="space-y-4 text-center flex flex-col items-center">
+          <img src="/dashboardlogo.png" alt="FabStock Logo" className="h-[60px] w-auto object-contain" />
+          <h1 className="font-medium text-3xl">Bienvenue sur FabStock</h1>
+          <p className="text-muted-foreground text-sm">Veuillez entrer vos identifiants pour vous connecter.</p>
         </div>
         <div className="space-y-4">
           <Suspense fallback={<div className="text-center text-muted-foreground text-sm">Loading form...</div>}>

@@ -80,6 +80,27 @@ class ProjectController extends Controller
         return response()->json($project->load(['users', 'items', 'encadrant']));
     }
 
+    public function destroy(Request $request, Project $project)
+    {
+        if (!$request->user()->isAdmin()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // Return all items to stock
+        foreach ($project->items as $item) {
+            $qte = $item->pivot->quantite;
+            $item->quantite_en_stock += $qte;
+            $item->quantite_en_projet = max(0, $item->quantite_en_projet - $qte);
+            $item->save();
+        }
+
+        $project->items()->detach();
+        $project->users()->detach();
+        $project->delete();
+
+        return response()->json(['success' => true]);
+    }
+
     // Add or update items in project (with stock decrease)
     public function addItems(Request $request, Project $project)
     {

@@ -119,7 +119,7 @@ export interface InventoryFilters {
 }
 
 const apiBaseUrl =
-  process.env.BACKEND_API_URL ?? process.env.NEXT_PUBLIC_BACKEND_API_URL ?? "http://localhost:8000/api";
+  process.env.BACKEND_API_URL ?? process.env.NEXT_PUBLIC_BACKEND_API_URL ?? "http://172.20.10.5:8000/api";
 
 const bearerToken = process.env.BACKEND_BEARER_TOKEN ?? process.env.NEXT_PUBLIC_BACKEND_BEARER_TOKEN;
 
