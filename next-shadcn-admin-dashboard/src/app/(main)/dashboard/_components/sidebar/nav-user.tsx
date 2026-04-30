@@ -75,6 +75,10 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <CircleUser />
+                Account
+              </DropdownMenuItem>
 
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

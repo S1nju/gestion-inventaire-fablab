@@ -50,7 +50,7 @@ function getBackendApiUrl() {
     process.env.NEXT_PUBLIC_BACKEND_API_URL ??
     process.env.BACKEND_URL?.replace(/\/?$/, "/api") ??
     process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/?$/, "/api") ??
-    "http://172.20.10.5:8000/api"
+    "http://localhost:8000/api"
   );
 }
 

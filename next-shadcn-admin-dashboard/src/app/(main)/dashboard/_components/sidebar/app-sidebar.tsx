@@ -76,36 +76,24 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
   const collapsible = isSynced ? sidebarCollapsible : props.collapsible;
 
   return (
-    <Sidebar
-      {...props}
-      variant={variant}
-      collapsible={collapsible}
-      className="border-r-0"
-      style={{
-        "--sidebar": "oklch(0.53 0.08 221)",
-        "--sidebar-foreground": "oklch(1 0 0)",
-        "--sidebar-accent": "oklch(0.4 0.08 221)",
-        "--sidebar-accent-foreground": "oklch(1 0 0)",
-        "--sidebar-border": "oklch(0.50 0.08 221)"
-      } as React.CSSProperties}
-    >
+    <Sidebar {...props} variant={variant} collapsible={collapsible}>
       <SidebarHeader>
-        <SidebarMenu >
+        <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="h-14 hover:bg-transparent hover:text-white data-[state=open]:bg-transparent">
-              <Link prefetch={false} href="/dashboard/analytics" className="flex items-center justify-center">
-                <img src="/dashboardlogo.png" alt="Dashboard Logo" />
+            <SidebarMenuButton asChild>
+              <Link prefetch={false} href="/dashboard/inventory" className="flex items-center gap-2">
+                <img src="/dashboardlogo.png" alt="FabStock Logo" className="h-8 w-auto object-contain" />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent className="bg-[#2E7D8C]">
+      <SidebarContent>
         <NavMain items={sidebarItems} />
         {/* <NavDocuments items={data.documents} /> */}
         {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
-      <SidebarFooter className="bg-[#2E7D8C]">
+      <SidebarFooter>
         <NavUser
           user={
             user ?? {

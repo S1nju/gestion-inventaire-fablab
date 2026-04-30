@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Plus, Printer, ArrowRight, Trash2 } from "lucide-react";
+import { Plus, Printer, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { createProject, createEncadrant, deleteProject } from "@/lib/inventory-api.client";
+import { createProject, createEncadrant } from "@/lib/inventory-api.client";
 import type { Project, Encadrant, User } from "@/lib/inventory-api";
 
 export function ProjectsCrudPanel({ projects, encadrants, students = [], isAdmin, currentUserId }: { projects: Project[], encadrants: Encadrant[], students?: User[], isAdmin: boolean, currentUserId?: number }) {
@@ -116,20 +116,6 @@ export function ProjectsCrudPanel({ projects, encadrants, students = [], isAdmin
                                             <Printer className="size-4" />
                                         </Link>
                                     </Button>
-                                    {isAdmin && (
-                                        <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50" onClick={async () => {
-                                            if (!confirm(`Supprimer le projet "${p.titre}" ? Les composants seront retournés au stock.`)) return;
-                                            try {
-                                                await deleteProject(p.id);
-                                                toast.success("Projet supprimé");
-                                                router.refresh();
-                                            } catch (e) {
-                                                toast.error(e instanceof Error ? e.message : "Erreur");
-                                            }
-                                        }}>
-                                            <Trash2 className="size-4" />
-                                        </Button>
-                                    )}
                                 </div>
                             </TableCell>
                         </TableRow>
