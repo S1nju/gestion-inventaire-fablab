@@ -18,7 +18,7 @@ const formSchema = z.object({
   remember: z.boolean().optional(),
 });
 
-const backendBaseUrl = "http://localhost:8000";
+const backendBaseUrl = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://172.20.10.5:8000";
 
 function setAuthTokenCookie(token: string) {
   document.cookie = `inventory_token=${encodeURIComponent(token)}; Path=/; Max-Age=${60 * 60 * 24 * 7}; SameSite=Lax`;
