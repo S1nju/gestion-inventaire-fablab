@@ -15,6 +15,7 @@ import { AccountSwitcher } from "./_components/sidebar/account-switcher";
 import { LayoutControls } from "./_components/sidebar/layout-controls";
 import { SearchDialog } from "./_components/sidebar/search-dialog";
 import { ThemeSwitcher } from "./_components/sidebar/theme-switcher";
+import { Chatbot } from "@/components/chatbot";
 
 export default async function Layout({ children }: Readonly<{ children: ReactNode }>) {
   const hasSession = await hasLaravelSessionCookie();
@@ -98,6 +99,9 @@ export default async function Layout({ children }: Readonly<{ children: ReactNod
         </header>
         <div className="h-full p-4 print:p-0 md:p-6">{children}</div>
       </SidebarInset>
+      <div className="print:hidden">
+        <Chatbot />
+      </div>
     </SidebarProvider>
   );
 }
