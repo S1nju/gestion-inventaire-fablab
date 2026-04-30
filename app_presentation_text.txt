@@ -1,0 +1,113 @@
+App Overview
+Your app is a full Inventory Management System for a university/faculty environment.
+It manages:
+- Inventory items (articles/equipment)
+- Organizational structure (Facultes, Services, Bureaux)
+- Responsables (people in charge)
+- Item movements (assignments, transfers, returns, bureau transfers)
+- Printable administrative documents (inventory sheet + transfer receipt)
+
+It supports role-based usage:
+- Editor: can create/edit/delete and perform movements
+- Viewer: read-only visibility
+
+
+Frontend Sections (What to show in screenshots)
+
+1. Authentication (Login)
+- Secure login page with backend token auth
+- User identity displayed in sidebar/navbar after login
+- Logout integrated and functional
+
+Screenshot idea:
+- Login screen
+- Logged-in dashboard header with user info
+
+2. Dashboard Navigation
+- Sidebar with all business modules
+- Top navbar with account and layout controls
+- Section-based access flow for inventory operations
+
+Screenshot idea:
+- Full dashboard layout showing sidebar + top navbar + main content area
+
+3. Inventaire Section
+- Main table of all items
+- Columns include name, designation, n_inventaire, bureau/service, responsible, quantity
+- Filters/search for quick lookup
+- CRUD operations for editors
+- Viewer can see data without edit/delete controls
+- Item-level movement history modal
+
+Screenshot idea:
+- Inventory table with filters
+- Item details row with action buttons
+- History modal open for one item
+
+4. Mouvements Section
+- Centralized movement history table
+- Shows action type, source, destination, date, quantity, notes, n_inventaire
+- Advanced search filters:
+  - by item name
+  - by inventory number
+  - by action type
+  - by bureau
+  - by date range
+- Pagination with per-page control
+
+Screenshot idea:
+- Movement table + active filters
+- Pagination controls at bottom
+
+5. Nouveau Mouvement Panel
+- Affecter flow for assigning items to bureau/responsable
+- Supports item search (name / n_inventaire)
+- Quantity handling for non-inventoried stock-like items
+- Service name shown with bureau context
+- Transfer and return workflows included
+
+Screenshot idea:
+- Affecter modal with selected items and quantity area
+- Transfer modal between services/bureaux
+
+6. Master Data Sections
+- Facultes
+- Services
+- Bureaux
+- Responsables
+
+These sections define the organizational hierarchy used by inventory and movement logic.
+
+Screenshot idea:
+- One screenshot each for Facultes, Services, Bureaux, Responsables lists
+
+
+Printable Outputs (Documents)
+Your app produces formal print outputs for administration:
+
+1. Fiche d'inventaire (Inventory Sheet)
+- Printable inventory listing
+- Supports filtering context (bureau/service/faculty)
+- Multi-page print behavior for large tables
+
+2. Bon/Attestation de Transfert (Arabic Transfer Receipt)
+- Formal printable transfer document
+- Institutional bilingual header
+- University logo integrated
+- Arabic layout (تصريح باستلام)
+- Includes source/destination services, transferred items, inventory numbers, notes
+- Signature zones (recipient, sender, secretary)
+- Optimized for browser print
+
+Screenshot idea:
+- Print preview of Fiche d'inventaire
+- Print preview of Arabic transfer paper with logo and signatures
+
+
+Suggested Demo Glimpse Flow (Quick Story)
+1. Login as Editor
+2. Open Inventaire and search an item
+3. Open Mouvements and apply advanced filters
+4. Perform an Affecter/Transfer action
+5. Open generated print document
+6. Login as Viewer and show read-only interface (no edit/delete buttons)
